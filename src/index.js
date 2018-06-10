@@ -1,22 +1,30 @@
 const { GraphQLServer } = require('graphql-yoga')
-
-const typeDefs =
-    `
+let links = [{
+    id: 'link-0',
+    url: 'www.howtographql.com',
+    description: 'Fullstack tutorial for GraphQL'
+}]
+const typeDefs = `
     type Query {
-        users: [User!]!
-        user(id:ID!):User
+        info: String!
+        feed:[Link!]!
     }
-    type Mutation{
-        createUser(name:String!):User!
-    }
-    type User{
+
+    type Link{
         id: ID!
-        name: String!
+        description : String!
+        url: String!
     }
     `
 const resolvers = {
     Query: {
-
+        info: () => `heelll`,
+        feed: () => links,
+    },
+    Link: {
+        id: (root) => root.id,
+        description: (root) => root.description,
+        url: (root) => root.url
     }
 }
 
