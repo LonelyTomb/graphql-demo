@@ -4,32 +4,41 @@ let links = [{
     url: 'www.howtographql.com',
     description: 'Fullstack tutorial for GraphQL'
 }]
-const typeDefs = `
-    type Query {
-        info: String!
-        feed:[Link!]!
-    }
 
-    type Link{
-        id: ID!
-        description : String!
-        url: String!
-    }
-    `
+let idCount = links.length
 const resolvers = {
     Query: {
-        info: () => `heelll`,
+        info: () => `hello`,
         feed: () => links,
+        link: (root, args) => links.filter(link => link.id === args.id)
     },
-    Link: {
-        id: (root) => root.id,
-        description: (root) => root.description,
-        url: (root) => root.url
+    Mutation: {
+        post: (root, args) => {
+            const link = {
+                id: `link-${idCount++}`,
+                description: args.description,
+                url: args.url
+            }
+            links.push(link)
+            return link
+        },
+        updateLink: (root, args) => {
+            links.map((val, index) => {
+                if (val.id === args.id) {
+                    links[index].url = args.url
+                    links[index].description = args.description
+                    return val
+                }
+            })
+        },
+        deleteLink: (root, args) => {
+            links = links.filter(link => link.id !== args.id)
+        }
     }
 }
 
 const server = new GraphQLServer({
-    typeDefs,
+    typeDefs: './src/schema.graphql',
     resolvers
 })
 
